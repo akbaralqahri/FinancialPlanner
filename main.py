@@ -8,7 +8,7 @@ import json
 
 # Konfigurasi halaman
 st.set_page_config(
-    page_title="Financia - Wealth Planner Pro",
+    page_title="Financial Planner - by @akbaralqahri",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -739,8 +739,8 @@ if 'goals' not in st.session_state:
 
 # Sidebar Navigation
 with st.sidebar:
-    st.markdown("### 📊 Financia")
-    st.markdown("**Wealth Planner Pro**")
+    st.markdown("### 📊 Financial Planner")
+    st.markdown("**by @akbaralqahri**")
     st.markdown("---")
 
     menu = st.radio(
@@ -1924,11 +1924,34 @@ elif menu == "⚙️ Pengaturan":
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style='text-align: center; padding: 2rem; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 16px; margin-top: 2rem; border: 2px solid #475569;'>
-    <div style='font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem;'>
-        Financia - Wealth Planner Pro
-    </div>
-    <p style='color: #94a3b8; font-weight: 500; margin: 0.5rem 0;'>Aplikasi Perencanaan Keuangan Komprehensif</p>
-    <p style='color: #64748b; font-size: 0.875rem; margin-top: 1rem;'>💡 Dibuat dengan ❤️ menggunakan Streamlit & Python</p>
+<div style='
+    text-align: center; 
+    padding: 1.5rem; 
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+    border-radius: 16px; 
+    margin-top: 2rem; 
+    border: 2px solid #475569;
+'>
+    <p style='
+        color: #cbd5f5; 
+        font-weight: 600; 
+        margin-bottom: 0.5rem;
+    '>
+        © 2026 @akbaralqahri
+    </p>
+    <p style='
+        color: #94a3b8; 
+        font-size: 0.875rem;
+    '>
+        <a href='https://www.linkedin.com/in/akbaralqahri/' target='_blank' 
+           style='color: #a78bfa; text-decoration: none; font-weight: 500;'>
+            LinkedIn
+        </a>
+        &nbsp;•&nbsp;
+        <a href='https://akbaralqahri.github.io/portofolio/' target='_blank' 
+           style='color: #ec4899; text-decoration: none; font-weight: 500;'>
+            Portfolio
+        </a>
+    </p>
 </div>
 """, unsafe_allow_html=True)
