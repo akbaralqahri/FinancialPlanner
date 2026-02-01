@@ -8,7 +8,7 @@ import json
 
 # Konfigurasi halaman
 st.set_page_config(
-    page_title="Financial Planner - by @akbaralqahri",
+    page_title="Financia - Wealth Planner Pro",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -751,10 +751,6 @@ with st.sidebar:
         label_visibility="collapsed"
     )
 
-    st.markdown("---")
-    st.markdown("### 👤 Profil Pengguna")
-    st.info("**User Indonesia**\nFree Plan")
-
 # Hitung metrik penting
 data = st.session_state.financial_data
 debts = st.session_state.debts
@@ -1199,49 +1195,49 @@ elif menu == "🎯 Tujuan Keuangan":
             st.rerun()
     
     with col_calc:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown("<div style='font-size: 1.3rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;'>🧮 Kalkulator Cepat</div>", unsafe_allow_html=True)
-        st.caption("Hitung kebutuhan menabung dengan mudah")
-        
-        st.markdown("<div style='margin: 1.5rem 0;'></div>", unsafe_allow_html=True)
-        
-        calc_target = st.number_input(
-            "🎯 Target Dana (Rp)",
-            min_value=0,
-            value=100000000,
-            step=10000000,
-            format="%d"
-        )
-        
-        calc_year = st.number_input(
-            "📅 Tahun Tercapai",
-            min_value=datetime.now().year,
-            value=datetime.now().year + 5,
-            step=1
-        )
-        
-        calc_current = st.number_input(
-            "💰 Dana Tersedia (Rp)",
-            min_value=0,
-            value=0,
-            step=1000000,
-            format="%d"
-        )
-        
-        years_to_goal = calc_year - datetime.now().year
-        months_to_goal = max(years_to_goal * 12, 1)
-        gap_to_goal = calc_target - calc_current
-        monthly_to_goal = gap_to_goal / months_to_goal
-        
-        st.markdown("---")
-        st.markdown(f"""
-        <div class="custom-metric-compact" style="text-align: center;">
-            <div class="custom-metric-label">✨ Hasil Perhitungan</div>
-            <div class="custom-metric-value" style="color: #34d399;">{format_idr(monthly_to_goal)}</div>
-            <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.4rem;">per bulan x {years_to_goal} tahun</div>
-        </div>
-        """, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        # MENGGUNAKAN st.container DENGAN BORDER SEBAGAI PENGGANTI DIV CARD YANG RUSAK
+        with st.container(border=True):
+            st.markdown("<div style='font-size: 1.3rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;'>🧮 Kalkulator Cepat</div>", unsafe_allow_html=True)
+            st.caption("Hitung kebutuhan menabung dengan mudah")
+            
+            st.markdown("<div style='margin: 1.5rem 0;'></div>", unsafe_allow_html=True)
+            
+            calc_target = st.number_input(
+                "🎯 Target Dana (Rp)",
+                min_value=0,
+                value=100000000,
+                step=10000000,
+                format="%d"
+            )
+            
+            calc_year = st.number_input(
+                "📅 Tahun Tercapai",
+                min_value=datetime.now().year,
+                value=datetime.now().year + 5,
+                step=1
+            )
+            
+            calc_current = st.number_input(
+                "💰 Dana Tersedia (Rp)",
+                min_value=0,
+                value=0,
+                step=1000000,
+                format="%d"
+            )
+            
+            years_to_goal = calc_year - datetime.now().year
+            months_to_goal = max(years_to_goal * 12, 1)
+            gap_to_goal = calc_target - calc_current
+            monthly_to_goal = gap_to_goal / months_to_goal
+            
+            st.markdown("---")
+            st.markdown(f"""
+            <div class="custom-metric-compact" style="text-align: center; margin: 10px 0; padding: 1.5rem;">
+                <div class="custom-metric-label" style="margin-bottom: 0.5rem;">✨ Hasil Perhitungan</div>
+                <div class="custom-metric-value" style="color: #34d399; margin-bottom: 0.5rem;">{format_idr(monthly_to_goal)}</div>
+                <div style="font-size: 0.8rem; color: #94a3b8;">per bulan x {years_to_goal} tahun</div>
+            </div>
+            """, unsafe_allow_html=True)
 
 # =============================================================================
 # DANA DARURAT
@@ -1759,39 +1755,45 @@ elif menu == "⚙️ Pengaturan":
         col1, col2 = st.columns(2)
         
         with col1:
-            age = st.number_input(
-                "🎂 Usia Saat Ini",
-                min_value=18,
-                max_value=100,
-                value=data.get('age', 30),
-                help="Usia Anda saat ini untuk perhitungan proyeksi FIRE"
-            )
-            
-            risk = st.selectbox(
-                "📊 Profil Risiko Investasi",
-                options=['Conservative', 'Moderate', 'Aggressive'],
-                index=['Conservative', 'Moderate', 'Aggressive'].index(data['risk_profile']),
-                help="Profil risiko untuk rekomendasi investasi"
-            )
+            # MENGGUNAKAN CONTAINER AGAR INPUT DAN TOMBOL MENYATU DALAM SATU KOTAK
+            with st.container(border=True):
+                st.markdown("<div style='font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>📝 Edit Data Diri</div>", unsafe_allow_html=True)
+                
+                age = st.number_input(
+                    "🎂 Usia Saat Ini",
+                    min_value=18,
+                    max_value=100,
+                    value=data.get('age', 30),
+                    help="Usia Anda saat ini untuk perhitungan proyeksi FIRE"
+                )
+                
+                risk = st.selectbox(
+                    "📊 Profil Risiko Investasi",
+                    options=['Conservative', 'Moderate', 'Aggressive'],
+                    index=['Conservative', 'Moderate', 'Aggressive'].index(data['risk_profile']),
+                    help="Profil risiko untuk rekomendasi investasi"
+                )
+                
+                st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+                
+                if st.button("💾 Simpan Perubahan Profil", use_container_width=True):
+                    st.session_state.financial_data.update({
+                        'age': age,
+                        'risk_profile': risk
+                    })
+                    st.success("✅ Profil berhasil diperbarui!")
+                    st.rerun()
         
         with col2:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown("<div style='font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem;'>👥 Status Pernikahan:</div>", unsafe_allow_html=True)
-            st.markdown(f"<div style='font-size: 1.2rem; color: #e2e8f0; font-weight: 600;'>{data['marital_status'].replace('_', ' ').title()}</div>", unsafe_allow_html=True)
-            
-            st.markdown("<div style='margin: 1rem 0;'></div>", unsafe_allow_html=True)
-            
-            st.markdown("<div style='font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem;'>💪 Health Score:</div>", unsafe_allow_html=True)
-            st.markdown(f"<div style='font-size: 1.2rem; color: {health_color}; font-weight: 700;'>{health_score}/100 - {health_label}</div>", unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-        
-        if st.button("💾 Simpan Perubahan Profil", use_container_width=True):
-            st.session_state.financial_data.update({
-                'age': age,
-                'risk_profile': risk
-            })
-            st.success("✅ Profil berhasil diperbarui!")
-            st.rerun()
+            # MENGGANTI HTML CARD MANUAL DENGAN CONTAINER AGAR KONSISTEN
+            with st.container(border=True):
+                st.markdown("<div style='font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>ℹ️ Status Saat Ini</div>", unsafe_allow_html=True)
+                
+                st.markdown("<div style='font-weight: 600; color: #94a3b8; margin-bottom: 0.2rem;'>👥 Status Pernikahan:</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='font-size: 1.2rem; color: #e2e8f0; font-weight: 600; margin-bottom: 1.5rem;'>{data['marital_status'].replace('_', ' ').title()}</div>", unsafe_allow_html=True)
+                
+                st.markdown("<div style='font-weight: 600; color: #94a3b8; margin-bottom: 0.2rem;'>💪 Health Score:</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='font-size: 1.2rem; color: {health_color}; font-weight: 700;'>{health_score}/100 - {health_label}</div>", unsafe_allow_html=True)
     
     with tab2:
         st.markdown('<p class="section-header">💾 Manajemen Data</p>', unsafe_allow_html=True)
@@ -1799,38 +1801,42 @@ elif menu == "⚙️ Pengaturan":
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>📥 Export Data</div>", unsafe_allow_html=True)
-            st.caption("Backup semua data keuangan Anda ke file JSON")
-            
-            export_data = {
-                'financial_data': st.session_state.financial_data,
-                'debts': st.session_state.debts,
-                'goals': st.session_state.goals,
-                'debt_budget': st.session_state.debt_budget,
-                'export_date': datetime.now().isoformat(),
-                'version': '1.0'
-            }
-            
-            json_data = json.dumps(export_data, indent=2)
-            
-            st.download_button(
-                label="📥 Download Data (JSON)",
-                data=json_data,
-                file_name=f"financia_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
-                mime="application/json",
-                use_container_width=True
-            )
-            st.markdown('</div>', unsafe_allow_html=True)
+            # MEMBUNGKUS DOWNLOAD BUTTON DALAM CONTAINER
+            with st.container(border=True):
+                st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;'>📥 Export Data</div>", unsafe_allow_html=True)
+                st.caption("Backup semua data keuangan Anda ke file JSON")
+                
+                st.markdown("<div style='margin: 1rem 0;'></div>", unsafe_allow_html=True)
+                
+                export_data = {
+                    'financial_data': st.session_state.financial_data,
+                    'debts': st.session_state.debts,
+                    'goals': st.session_state.goals,
+                    'debt_budget': st.session_state.debt_budget,
+                    'export_date': datetime.now().isoformat(),
+                    'version': '1.0'
+                }
+                
+                json_data = json.dumps(export_data, indent=2)
+                
+                st.download_button(
+                    label="📥 Download Data (JSON)",
+                    data=json_data,
+                    file_name=f"financia_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                    mime="application/json",
+                    use_container_width=True
+                )
         
         with col2:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>🗑️ Reset Data</div>", unsafe_allow_html=True)
-            st.caption("Hapus semua data dan kembalikan ke default")
-            
-            if st.button("⚠️ Reset Semua Data", type="secondary", use_container_width=True):
-                st.warning("⚠️ Fitur reset akan menghapus semua data. Pastikan sudah backup terlebih dahulu!")
-            st.markdown('</div>', unsafe_allow_html=True)
+            # MEMBUNGKUS RESET BUTTON DALAM CONTAINER
+            with st.container(border=True):
+                st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;'>🗑️ Reset Data</div>", unsafe_allow_html=True)
+                st.caption("Hapus semua data dan kembalikan ke default")
+                
+                st.markdown("<div style='margin: 1rem 0;'></div>", unsafe_allow_html=True)
+                
+                if st.button("⚠️ Reset Semua Data", type="secondary", use_container_width=True):
+                    st.warning("⚠️ Fitur reset akan menghapus semua data. Pastikan sudah backup terlebih dahulu!")
         
         st.markdown("---")
         
@@ -1868,40 +1874,41 @@ elif menu == "⚙️ Pengaturan":
     with tab3:
         st.markdown('<p class="section-header">📊 Parameter Advanced</p>', unsafe_allow_html=True)
         
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>💹 Asumsi Investasi</div>", unsafe_allow_html=True)
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            new_inflation = st.slider(
-                "📉 Inflasi Tahunan (%)",
-                min_value=0.0,
-                max_value=15.0,
-                value=data['inflation_rate'],
-                step=0.1,
-                help="Asumsi inflasi rata-rata per tahun"
-            )
-        
-        with col2:
-            new_returns = st.slider(
-                "📈 Return Investasi Tahunan (%)",
-                min_value=0.0,
-                max_value=30.0,
-                value=data['investment_return'],
-                step=0.1,
-                help="Asumsi return investasi rata-rata per tahun"
-            )
-        
-        if st.button("💾 Update Parameter", use_container_width=True):
-            st.session_state.financial_data.update({
-                'inflation_rate': new_inflation,
-                'investment_return': new_returns
-            })
-            st.success("✅ Parameter berhasil diperbarui!")
-            st.rerun()
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+        # MEMBUNGKUS SLIDER DAN TOMBOL UPDATE DALAM SATU CONTAINER BESAR
+        with st.container(border=True):
+            st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>💹 Asumsi Investasi</div>", unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                new_inflation = st.slider(
+                    "📉 Inflasi Tahunan (%)",
+                    min_value=0.0,
+                    max_value=15.0,
+                    value=data['inflation_rate'],
+                    step=0.1,
+                    help="Asumsi inflasi rata-rata per tahun"
+                )
+            
+            with col2:
+                new_returns = st.slider(
+                    "📈 Return Investasi Tahunan (%)",
+                    min_value=0.0,
+                    max_value=30.0,
+                    value=data['investment_return'],
+                    step=0.1,
+                    help="Asumsi return investasi rata-rata per tahun"
+                )
+            
+            st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+            
+            if st.button("💾 Update Parameter", use_container_width=True):
+                st.session_state.financial_data.update({
+                    'inflation_rate': new_inflation,
+                    'investment_return': new_returns
+                })
+                st.success("✅ Parameter berhasil diperbarui!")
+                st.rerun()
         
         st.markdown("---")
         
