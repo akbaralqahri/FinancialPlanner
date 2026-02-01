@@ -8,7 +8,7 @@ import json
 
 # Konfigurasi halaman
 st.set_page_config(
-    page_title="Financia - Wealth Planner Pro",
+    page_title="Financial Planner Dashboard",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -34,7 +34,7 @@ st.markdown("""
     .block-container {
         background: #1e293b;
         border-radius: 24px;
-        padding-top: 6rem !important; /* Memberikan ruang agar tidak tertutup navbar */
+        padding-top: 6rem !important;
         padding-bottom: 3rem !important;
         padding-left: 3rem !important;
         padding-right: 3rem !important;
@@ -45,10 +45,9 @@ st.markdown("""
     
     /* Headers - REDESIGNED & FIXED */
     .main-header {
-        font-size: 2.5rem; /* Ukuran disesuaikan agar lebih rapi */
+        font-size: 2.5rem;
         font-weight: 800;
-        text-align: left; /* Align left for better layout with columns */
-        /* Brighter gradient for better contrast on dark bg */
+        text-align: left;
         background: linear-gradient(90deg, #f8fafc 0%, #a78bfa 50%, #f472b6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -734,24 +733,10 @@ if 'debt_budget' not in st.session_state:
 
 if 'goals' not in st.session_state:
     st.session_state.goals = [
-        {'id': 1, 'name': 'Dana Menikah', 'target': 100000000, 'current': 20000000, 'deadline_year': 2027}
+        {'id': 1, 'name': 'Beli Motor', 'target': 20000000, 'current': 5000000, 'deadline_year': 2027}
     ]
 
-# Sidebar Navigation
-with st.sidebar:
-    st.markdown("### 📊 Financial Planner")
-    st.markdown("**by @akbaralqahri**")
-    st.markdown("---")
-
-    menu = st.radio(
-        "Navigasi",
-        ["🏠 Dashboard Utama", "💰 Budget & Alokasi", "🎯 Tujuan Keuangan", 
-         "🛡️ Dana Darurat", "📉 Kalkulator Hutang", "🔥 Simulasi FIRE",
-         "⚙️ Pengaturan"],
-        label_visibility="collapsed"
-    )
-
-# Hitung metrik penting
+# Hitung metrik penting (dipindah ke atas sidebar agar health_score tersedia)
 data = st.session_state.financial_data
 debts = st.session_state.debts
 goals = st.session_state.goals
@@ -768,6 +753,126 @@ total_debt = sum([d['balance'] for d in debts])
 
 # Financial Health Score
 health_score, health_label, health_color = calculate_financial_health(data, debts, emergency_target)
+
+# =============================================================================
+# SIDEBAR
+# =============================================================================
+with st.sidebar:
+    # 1. Header dengan logo dan branding
+    st.markdown("""
+    <div style="text-align: center; padding: 10px 0 20px 0;">
+        <div style="font-size: 2.8rem; margin-bottom: 0.4rem; filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.5));">📊</div>
+        <h1 style="margin: 0; font-size: 1.75rem; background: linear-gradient(to right, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -0.03em;">Financial Planner</h1>
+        <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;">by @akbaralqahri</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 2. Navigasi Menu
+    menu = st.radio(
+        "Menu Utama",
+        ["🏠 Dashboard Utama", "💰 Budget & Alokasi", "🎯 Tujuan Keuangan",
+         "🛡️ Dana Darurat", "📉 Kalkulator Hutang", "🔥 Simulasi FIRE",
+         "⚙️ Pengaturan"],
+        label_visibility="collapsed"
+    )
+
+    st.markdown("<div style='margin: 18px 0 6px 0;'></div>", unsafe_allow_html=True)
+
+    # 3. Mini Health Score — selalu terlihat
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(51, 65, 85, 0.4)); padding: 14px 16px; border-radius: 14px; border: 1px solid #334155; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+            <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">Health Score</span>
+            <span style="font-size: 1.15rem; font-weight: 800; color: {health_color};">{health_score}<span style="font-size: 0.65rem; color: #64748b; font-weight: 500;">/100</span></span>
+        </div>
+        <div style="background: #1e293b; height: 7px; border-radius: 4px; overflow: hidden; border: 1px solid #334155;">
+            <div style="width: {health_score}%; height: 100%; background: linear-gradient(90deg, {health_color}, {health_color}cc); border-radius: 4px; transition: width 0.5s ease;"></div>
+        </div>
+        <div style="text-align: right; font-size: 0.68rem; color: {health_color}; margin-top: 5px; font-weight: 600;">{health_label}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 5. Quick Stats Mini — cashflow at a glance
+    net_cashflow = data['monthly_income'] - data['monthly_expenses']
+    savings_rate_pct = (net_cashflow / data['monthly_income']) * 100
+
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(51, 65, 85, 0.4)); padding: 14px 16px; border-radius: 14px; border: 1px solid #334155; margin-bottom: 12px;">
+        <div style="font-size: 0.7rem; color: #94a3b8; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px;">💵 Cashflow Bulan Ini</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 0.72rem; color: #94a3b8;">Pendapatan</span>
+            <span style="font-size: 0.82rem; font-weight: 700; color: #34d399;">{format_idr(data['monthly_income'])}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 0.72rem; color: #94a3b8;">Pengeluaran</span>
+            <span style="font-size: 0.82rem; font-weight: 700; color: #f87171;">{format_idr(data['monthly_expenses'])}</span>
+        </div>
+        <div style="height: 1px; background: #334155; margin: 8px 0;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.72rem; color: #a78bfa; font-weight: 600;">Net Cashflow</span>
+            <span style="font-size: 0.9rem; font-weight: 800; color: #a78bfa;">{format_idr(net_cashflow)}</span>
+        </div>
+        <div style="font-size: 0.65rem; color: #64748b; text-align: right; margin-top: 3px;">Savings Rate: {savings_rate_pct:.1f}%</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 6. Debt Alert — hanya tampil kalau ada hutang
+    if debts:
+        highest_interest_debt = max(debts, key=lambda d: d['interest'])
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, rgba(146, 64, 14, 0.45), rgba(180, 83, 9, 0.35)); padding: 12px 14px; border-radius: 14px; border: 1px solid #b45309; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="font-size: 0.95rem;">⚡</span>
+                <span style="font-size: 0.7rem; color: #fbbf24; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Hutang Aktif</span>
+            </div>
+            <div style="font-size: 0.78rem; color: #fef3c7; line-height: 1.5;">
+                <strong>{highest_interest_debt['name']}</strong> — bunga <strong style="color: #fbbf24;">{highest_interest_debt['interest']}%/thn</strong>
+            </div>
+            <div style="font-size: 0.68rem; color: #d97706; margin-top: 4px;">Sisa: {format_idr(highest_interest_debt['balance'])}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # 7. Goal Progress Mini — tampil kalau ada goals
+    if goals:
+        # Ambil goal terdekat deadline-nya
+        nearest_goal = min(goals, key=lambda g: g['deadline_year'])
+        goal_progress = min((nearest_goal['current'] / nearest_goal['target']) * 100, 100) if nearest_goal['target'] > 0 else 0
+
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(51, 65, 85, 0.4)); padding: 12px 14px; border-radius: 14px; border: 1px solid #334155; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">🎯 Tujuan Terdekat</span>
+                <span style="font-size: 0.68rem; color: #64748b;">Target {nearest_goal['deadline_year']}</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #e2e8f0; font-weight: 600; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{nearest_goal['name']}</div>
+            <div style="background: #1e293b; height: 6px; border-radius: 3px; overflow: hidden; border: 1px solid #334155;">
+                <div style="width: {goal_progress}%; height: 100%; background: linear-gradient(90deg, #a78bfa, #ec4899); border-radius: 3px; transition: width 0.5s ease;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                <span style="font-size: 0.65rem; color: #a78bfa; font-weight: 600;">{goal_progress:.0f}% tercapai</span>
+                <span style="font-size: 0.65rem; color: #64748b;">{format_idr(nearest_goal['target'])}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # 4. Tips Harian
+    tips = [
+        "Lunasi hutang bunga tinggi terlebih dahulu sebelum investasi.",
+        "Simpan dana darurat di instrumen likuid seperti RDPU atau bank.",
+        "Investasi adalah maraton jangka panjang, bukan sprint.",
+        "Catat pengeluaran kecil — latte factor bisa menumpuk!",
+        "Review portofolio investasi Anda minimal setiap 6 bulan.",
+        "Tingkatkan savings rate 1% setiap kali gaji naik.",
+        "Hindari inflasi gaya hidup saat pendapatan bertambah."
+    ]
+    daily_tip = tips[hash(str(datetime.now().date())) % len(tips)]
+
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, rgba(30, 58, 138, 0.5), rgba(30, 64, 175, 0.4)); padding: 14px 16px; border-radius: 14px; border: 1px solid #1e40af; margin-top: 8px;">
+        <div style="font-size: 0.7rem; color: #60a5fa; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;">💡 Tip Hari Ini</div>
+        <div style="font-size: 0.8rem; color: #c7d2fe; line-height: 1.5;">{daily_tip}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # =============================================================================
 # DASHBOARD UTAMA
@@ -790,7 +895,7 @@ if menu == "🏠 Dashboard Utama":
     
     st.markdown("---")
     
-    # Quick Stats - Using HTML instead of Streamlit metrics
+    # Quick Stats
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -831,7 +936,6 @@ if menu == "🏠 Dashboard Utama":
     col_left, col_right = st.columns([2, 1])
     
     with col_left:
-        # Parameter Keuangan
         st.markdown('<p class="section-header">⚙️ Parameter Keuangan Utama</p>', unsafe_allow_html=True)
         
         col_a, col_b = st.columns(2)
@@ -913,20 +1017,16 @@ if menu == "🏠 Dashboard Utama":
             """, unsafe_allow_html=True)
     
     with col_right:
-        # Metrik Kesehatan
         st.markdown('<p class="section-header">📊 Metrik Kesehatan</p>', unsafe_allow_html=True)
         
-        # Rasio Menabung
         savings_rate = ((data['monthly_income'] - data['monthly_expenses']) / data['monthly_income']) * 100
         
-        # Rasio Hutang
         if debts:
             min_debt = sum([d['min_payment'] for d in debts])
             debt_ratio = (min_debt / data['monthly_income']) * 100
         else:
             debt_ratio = 0
         
-        # Dana Darurat
         ef_progress = (data['current_savings'] / emergency_target) * 100
         
         st.markdown(f'''
@@ -1103,9 +1203,7 @@ elif menu == "🎯 Tujuan Keuangan":
     with col_main:
         st.markdown('<p class="section-header">📋 Daftar Tujuan</p>', unsafe_allow_html=True)
         
-        # Loop dengan enumerasi untuk update/delete
         for idx, goal in enumerate(goals):
-            # Kalkulasi progress bar
             progress = (goal['current'] / goal['target']) * 100 if goal['target'] > 0 else 0
             
             years_left = goal['deadline_year'] - datetime.now().year
@@ -1113,9 +1211,7 @@ elif menu == "🎯 Tujuan Keuangan":
             gap = goal['target'] - goal['current']
             monthly_needed = gap / months_left if months_left > 0 else gap
 
-            # Menggunakan expander seperti kalkulator hutang
             with st.expander(f"🎯 {goal['name']} ({progress:.1f}%)", expanded=False):
-                # Visualisasi mini di dalam expander
                 col_viz_1, col_viz_2 = st.columns([3, 1])
                 with col_viz_1:
                     st.progress(min(progress / 100, 1.0))
@@ -1125,7 +1221,6 @@ elif menu == "🎯 Tujuan Keuangan":
                 
                 st.markdown("---")
                 
-                # Form Edit
                 col_a, col_b = st.columns(2)
                 
                 with col_a:
@@ -1162,7 +1257,6 @@ elif menu == "🎯 Tujuan Keuangan":
                         key=f"goal_year_{goal['id']}"
                     )
                 
-                # Tombol Aksi
                 col_update, col_delete = st.columns([3, 1])
                 
                 with col_update:
@@ -1182,7 +1276,6 @@ elif menu == "🎯 Tujuan Keuangan":
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Tombol Tambah Goal
         if st.button("➕ Tambah Tujuan Baru", use_container_width=True):
             new_goal = {
                 'id': max([g['id'] for g in goals]) + 1 if goals else 1,
@@ -1195,7 +1288,6 @@ elif menu == "🎯 Tujuan Keuangan":
             st.rerun()
     
     with col_calc:
-        # MENGGUNAKAN st.container DENGAN BORDER SEBAGAI PENGGANTI DIV CARD YANG RUSAK
         with st.container(border=True):
             st.markdown("<div style='font-size: 1.3rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;'>🧮 Kalkulator Cepat</div>", unsafe_allow_html=True)
             st.caption("Hitung kebutuhan menabung dengan mudah")
@@ -1249,7 +1341,6 @@ elif menu == "🛡️ Dana Darurat":
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        # Progress Circle
         ef_progress = min((data['current_savings'] / emergency_target) * 100, 100)
         
         html_content = f'''
@@ -1345,7 +1436,6 @@ elif menu == "🛡️ Dana Darurat":
         html_content += '</div>'
         st.markdown(html_content, unsafe_allow_html=True)
     
-    # Info Box
     st.markdown("---")
     st.info("""
     ### 📚 Mengapa Dana Darurat Penting?
@@ -1371,7 +1461,6 @@ elif menu == "📉 Kalkulator Hutang":
     with col_left:
         st.markdown('<p class="section-header">📋 Daftar Hutang</p>', unsafe_allow_html=True)
         
-        # Display and edit debts
         for idx, debt in enumerate(debts):
             with st.expander(f"💳 {debt['name']} - {format_idr(debt['balance'])}", expanded=True):
                 col_a, col_b = st.columns(2)
@@ -1427,7 +1516,6 @@ elif menu == "📉 Kalkulator Hutang":
                         st.session_state.debts.pop(idx)
                         st.rerun()
         
-        # Add new debt
         if st.button("➕ Tambah Hutang Baru", use_container_width=True):
             new_debt = {
                 'id': max([d['id'] for d in debts]) + 1 if debts else 1,
@@ -1439,7 +1527,6 @@ elif menu == "📉 Kalkulator Hutang":
             st.session_state.debts.append(new_debt)
             st.rerun()
         
-        # Budget setting
         st.markdown("---")
         st.markdown('<p class="section-header">💰 Budget Pelunasan Bulanan</p>', unsafe_allow_html=True)
         
@@ -1458,10 +1545,7 @@ elif menu == "📉 Kalkulator Hutang":
     
     with col_right:
         if debts and st.session_state.debt_budget > 0:
-            # Snowball simulation
             snowball = simulate_debt_payoff(debts, st.session_state.debt_budget, 'snowball')
-            
-            # Avalanche simulation
             avalanche = simulate_debt_payoff(debts, st.session_state.debt_budget, 'avalanche')
             
             is_winner = avalanche['interest'] < snowball['interest']
@@ -1513,7 +1597,6 @@ elif menu == "📉 Kalkulator Hutang":
             
             st.markdown(html_content, unsafe_allow_html=True)
             
-            # Comparison chart
             st.markdown("---")
             st.markdown('<p class="section-header">📊 Perbandingan Timeline</p>', unsafe_allow_html=True)
             
@@ -1593,7 +1676,6 @@ elif menu == "🔥 Simulasi FIRE":
     st.markdown('<p class="main-header">Peta Jalan Pensiun Dini</p>', unsafe_allow_html=True)
     st.markdown('<p class="sub-header">Financial Independence Retire Early - Kebebasan Finansial</p>', unsafe_allow_html=True)
     
-    # Header Info
     monthly_invest = data['monthly_income'] - data['monthly_expenses']
     
     col1, col2 = st.columns([2, 1])
@@ -1618,13 +1700,11 @@ elif menu == "🔥 Simulasi FIRE":
         </div>
         ''', unsafe_allow_html=True)
     
-    # Projection Chart
     projection = calculate_fire_projection(data, years=30)
     df_fire = pd.DataFrame(projection)
     
     fig = go.Figure()
     
-    # Area chart
     fig.add_trace(go.Scatter(
         x=df_fire['year'],
         y=df_fire['value'],
@@ -1634,7 +1714,6 @@ elif menu == "🔥 Simulasi FIRE":
         fillcolor='rgba(167, 139, 250, 0.2)'
     ))
     
-    # Target line
     fig.add_hline(
         y=fire_number,
         line_dash="dash",
@@ -1674,7 +1753,6 @@ elif menu == "🔥 Simulasi FIRE":
     
     st.plotly_chart(fig, use_container_width=True)
     
-    # Parameters
     st.markdown("---")
     st.markdown('<p class="section-header">⚙️ Parameter Simulasi</p>', unsafe_allow_html=True)
     
@@ -1724,7 +1802,6 @@ elif menu == "🔥 Simulasi FIRE":
         })
         st.rerun()
     
-    # Info
     st.markdown("---")
     st.info("""
     ### 📚 Apa itu FIRE (Financial Independence Retire Early)?
@@ -1755,7 +1832,6 @@ elif menu == "⚙️ Pengaturan":
         col1, col2 = st.columns(2)
         
         with col1:
-            # MENGGUNAKAN CONTAINER AGAR INPUT DAN TOMBOL MENYATU DALAM SATU KOTAK
             with st.container(border=True):
                 st.markdown("<div style='font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>📝 Edit Data Diri</div>", unsafe_allow_html=True)
                 
@@ -1785,7 +1861,6 @@ elif menu == "⚙️ Pengaturan":
                     st.rerun()
         
         with col2:
-            # MENGGANTI HTML CARD MANUAL DENGAN CONTAINER AGAR KONSISTEN
             with st.container(border=True):
                 st.markdown("<div style='font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>ℹ️ Status Saat Ini</div>", unsafe_allow_html=True)
                 
@@ -1801,7 +1876,6 @@ elif menu == "⚙️ Pengaturan":
         col1, col2 = st.columns(2)
         
         with col1:
-            # MEMBUNGKUS DOWNLOAD BUTTON DALAM CONTAINER
             with st.container(border=True):
                 st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;'>📥 Export Data</div>", unsafe_allow_html=True)
                 st.caption("Backup semua data keuangan Anda ke file JSON")
@@ -1828,7 +1902,6 @@ elif menu == "⚙️ Pengaturan":
                 )
         
         with col2:
-            # MEMBUNGKUS RESET BUTTON DALAM CONTAINER
             with st.container(border=True):
                 st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.5rem;'>🗑️ Reset Data</div>", unsafe_allow_html=True)
                 st.caption("Hapus semua data dan kembalikan ke default")
@@ -1874,7 +1947,6 @@ elif menu == "⚙️ Pengaturan":
     with tab3:
         st.markdown('<p class="section-header">📊 Parameter Advanced</p>', unsafe_allow_html=True)
         
-        # MEMBUNGKUS SLIDER DAN TOMBOL UPDATE DALAM SATU CONTAINER BESAR
         with st.container(border=True):
             st.markdown("<div style='font-size: 1.2rem; font-weight: 700; color: #e2e8f0; margin-bottom: 1rem;'>💹 Asumsi Investasi</div>", unsafe_allow_html=True)
             
